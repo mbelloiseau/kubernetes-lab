@@ -1,0 +1,5 @@
+/.vagrant
+/.env
+
+/shared/*
+!/shared/.gitkeep
