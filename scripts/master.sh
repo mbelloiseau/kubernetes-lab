@@ -35,6 +35,10 @@ fi
 echo "Let's configure Calico"
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 
+echo "Let's configure MetalLB"
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+
+# generate join command for workers
 kubeadm token create --print-join-command > /vagrant/shared/join.sh
 
 exit 0
