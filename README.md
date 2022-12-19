@@ -7,8 +7,8 @@ Kubernetes lab
 
 ### requirements
 
-* Vagrant (I'm working with version 2.3.4)
-* Virtualbox (I'm working with version 6.1.38-dfsg-3~ubuntu1.22.04.1)
+* Vagrant
+* Virtualbox
 * At least 16Go on your computeur
 
 I'm currently working with Vagrant 2.3.4 and VirtualBox 6.1.38 (6.1.38-dfsg-3~ubuntu1.22.04.1) but it should work any other version.

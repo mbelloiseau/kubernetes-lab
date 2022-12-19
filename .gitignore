@@ -1,5 +1,7 @@
 /.vagrant
 /.env
 
+/*.log
+
 /shared/*
 !/shared/.gitkeep
