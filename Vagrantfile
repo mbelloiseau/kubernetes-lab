@@ -7,6 +7,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.synced_folder "scripts/", "/opt/scripts"
   config.vm.synced_folder "shared/", "/opt/shared"
+  config.vm.synced_folder "manifests/", "/opt/manifests"
 
   config.vm.provider "virtualbox" do |v|
     v.memory = 2024
@@ -26,6 +27,7 @@ Vagrant.configure("2") do |config|
     master.vm.provision "shell", inline: $update_hosts
     master.vm.provision "shell", path: "scripts/common.sh"
     master.vm.provision "shell", path: "scripts/master.sh"
+    master.vm.provision "shell", path: "scripts/tools.sh"
     master.vm.network "forwarded_port", guest: 6443, host: 6443
   end
 
@@ -36,7 +38,8 @@ Vagrant.configure("2") do |config|
         auto_config: true
       worker.vm.provision "shell", inline: $update_hosts
       worker.vm.provision "shell", path: "scripts/common.sh"
-      worker.vm.provision "shell", path: "shared/join.sh"
+      worker.vm.provision "shell", path: "scripts/nfs_client.sh"
+      worker.vm.provision "shell", path: "shared/join.sh" 
     end
   end
 end
