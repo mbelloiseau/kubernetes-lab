@@ -1,17 +1,5 @@
 # kubernetes-lab
 
-Kubernetes lab
-
-- [kubernetes-lab](#kubernetes-lab)
-  - [Purposes](#purposes)
-  - [Requirements](#requirements)
-  - [Architecture](#architecture)
-  - [Usage](#usage)
-  - [Configuration](#configuration)
-    - [Calico](#calico)
-    - [MetalLB](#metallb)
-    - [Nginx ingress controler](#nginx-ingress-controler)
-
 ## Purposes
 
 Build a local bare metal Kubernetes cluster with Vagrant (1 master 2 workers) with the following components
