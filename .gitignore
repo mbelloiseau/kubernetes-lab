@@ -5,3 +5,6 @@
 
 /shared/*
 !/shared/.gitkeep
+
+/notes/*
+/scripts/*.log
