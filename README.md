@@ -17,19 +17,7 @@ I'm currently working with Vagrant 2.3.4 and VirtualBox 6.1.38 (6.1.38-dfsg-3~ub
 
 ## Architecture
 
-```                                            
-                                                        +---------------------+               
-                                                        | Guest k8s-worker-1  |               
-                                                        |                     |               
-+-----------------------+    +----------------------+   | eth1 192.168.60.11  |               
-| Host                  |    |  Guest k8s-master    |   +---------------------+               
-|                       |    |                      |                                         
-| vboxnet0 192.168.60.1 |    |  eth1 192.168.60.10  |   +---------------------+               
-+-----------------------+    +----------------------+   | Guest k8s-worker-2  |               
-                                                        |                     |               
-                                                        | eth1 192.168.60.12  |               
-                                                        +---------------------+          
-```
+![architecture](.plantuml/out/architecture/architecture.png)
 
 ## Usage
 
