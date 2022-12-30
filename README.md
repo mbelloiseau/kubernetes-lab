@@ -1,6 +1,6 @@
 # kubernetes-lab
 
-## Purposes
+## Purpose
 
 Build a local bare metal Kubernetes cluster with Vagrant (1 master 2 workers) with the following components
 
@@ -43,9 +43,9 @@ $ vagrant up
 
 > The following commands can be directly executed from your computer with `vagrant ssh k8s-master -- <command>` or inside the k8s-master virtual machine after `vagrant ssh k8s-master`
 
-After `vagrant up` our VMs are installed but our Kubernetes cluster is not functionnal.
+After `vagrant up` our VMs are installed but our Kubernetes cluster is not fully functional.
 
-```
+```bash
 $ kubectl get nodes
 NAME           STATUS     ROLES           AGE     VERSION
 k8s-master     NotReady   control-plane   8m35s   v1.25.5
@@ -62,7 +62,7 @@ coredns-565d847f94-w25gz   0/1     Pending   0          6m17s
 
 We need to install a CNI plugin, I'm using Calico but there's some alternatives (see https://kubernetes.io/docs/concepts/cluster-administration/addons/#networking-and-network-policy)
 
-```
+```bash
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
@@ -74,7 +74,7 @@ When you deploy a bare-metal Kubernetes cluster it does not come with a network 
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
 ```
 
-```
+```bash
 cat <<EOF | kubectl apply -n metallb-system -f -
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -96,15 +96,15 @@ spec:
 EOF
 ```
 
+See [MetalLB documentation](https://metallb.universe.tf/configuration/) for more details.
+
 We can now create a simple deployment and expose it
 
-```
-$ kubectl create deployment --image nginx nginx
-deployment.apps/nginx created
-$ kubectl expose deployment nginx --port 80 --type LoadBalancer
-service/nginx exposed
-$ kubectl get services nginx -o jsonpath='{.status.loadBalancer.ingress[*].ip}'
-192.168.60.50
+```bash
+kubectl create namespace demo
+kubectl create deployment -n demo --image nginx nginx
+kubectl expose deployment -n demo nginx --port 80 --type LoadBalancer
+kubectl get services -n demo nginx -o jsonpath='{.status.loadBalancer.ingress[*].ip}'
 ```
 
-You should be able to reach the displayed IP adress (192.168.60.50 in our example) on port 80 from your computer.
+You should be able to reach the displayed IP adress on port 80 from your computer.
