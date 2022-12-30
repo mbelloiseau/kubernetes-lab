@@ -3,9 +3,9 @@
 ## Purposes
 
 Build a local bare metal Kubernetes cluster with Vagrant (1 master 2 workers) with the following components
-* [Calico](https://projectcalico.docs.tigera.io/getting-started/kubernetes/) for networking
-* [MetalLB](https://metallb.universe.tf/) as load-balancer
-* [Nginx ingress controller](https://docs.nginx.com/nginx-ingress-controller/)
+
+* [Calico](https://projectcalico.docs.tigera.io/getting-started/kubernetes/) as CNI plugin
+* [MetalLB](https://metallb.universe.tf/) as load-balancer (in layer 2 mode)
   
 ## Requirements
 
@@ -17,7 +17,7 @@ I'm currently working with Vagrant 2.3.4 and VirtualBox 6.1.38 (6.1.38-dfsg-3~ub
 
 ## Architecture
 
-```                                                                                                                                                                                            
+```                                            
                                                         +---------------------+               
                                                         | Guest k8s-worker-1  |               
                                                         |                     |               
@@ -41,9 +41,9 @@ $ vagrant up
 
 ## Configuration
 
-> The following commands can be directly executed from your computer with `vagrant ssh k8s-master -- <command>` or inside the virtual machine after `vagrant ssh`
+> The following commands can be directly executed from your computer with `vagrant ssh k8s-master -- <command>` or inside the k8s-master virtual machine after `vagrant ssh k8s-master`
 
-After `vagrant up` our VMs are installed by our Kubernetes cluster is not functionnal.
+After `vagrant up` our VMs are installed but our Kubernetes cluster is not functionnal.
 
 ```
 $ kubectl get nodes
@@ -60,28 +60,42 @@ coredns-565d847f94-w25gz   0/1     Pending   0          6m17s
 
 ### Calico
 
+We need to install a CNI plugin, I'm using Calico but there's some alternatives (see https://kubernetes.io/docs/concepts/cluster-administration/addons/#networking-and-network-policy)
+
 ```
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
 If needed we can install `calicoctl` as a Kubernetes pod
 
-```
-$ kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.5/manifests/calicoctl.yaml
-$ kubectl exec -ti -n kube-system calicoctl -- /calicoctl ipam show
-+----------+---------------+-----------+------------+--------------+
-| GROUPING |     CIDR      | IPS TOTAL | IPS IN USE |   IPS FREE   |
-+----------+---------------+-----------+------------+--------------+
-| IP Pool  | 172.18.0.0/16 |     65536 | 6 (0%)     | 65530 (100%) |
-+----------+---------------+-----------+------------+--------------+
-```
-
 ### MetalLB
 
-
+Hhen you deploy a bare-metal Kubernetes cluster it does not come with a network load balancer. MetalLB is a solution.
 
 ```
-$ kubectl apply -f https://raw.githubusercontent.com/mbelloiseau/kubernetes-lab/vagrant/manifests/metallb/metallb.yml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
+```
+
+```
+cat <<EOF | kubectl apply -n metallb-system -f -
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: first-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  - 192.168.60.50-192.168.60.60
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: example
+  namespace: metallb-system
+spec:
+  ipAddressPools:
+  - first-pool
+EOF
 ```
 
 We can now create a simple deployment and expose it
@@ -95,16 +109,4 @@ $ kubectl get services nginx -o jsonpath='{.status.loadBalancer.ingress[*].ip}'
 192.168.60.50
 ```
 
-You should be able to reach the displayed IP adress (192.168.60.50 in our example) on port 80 from your computeur.
-
-### Nginx ingress controler
-
-```
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
-kubectl create deployment httpd --image=httpd --port=80
-kubectl expose deployment httpd
-kubectl create ingress httpd --class=nginx --rule app.domain.tld/=httpd:80
-kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
-curl -H "Host: app.domain.tld" -I $(kubectl get service -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-kubectl logs -n ingress-nginx service/ingress-nginx-controller -f
-```
+You should be able to reach the displayed IP adress (192.168.60.50 in our example) on port 80 from your computer.
