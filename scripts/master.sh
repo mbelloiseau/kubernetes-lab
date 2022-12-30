@@ -32,23 +32,7 @@ if [ $? -eq 0 ] ; then
 	echo 'source <(kubectl completion bash)' >> "${VAGRANT_HOME}"/.bashrc
 fi
 
-#echo "Let's configure Calico"
-#kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
-
-#echo "Let's configure MetalLB"
-#kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
-
 # generate join command for workers
 kubeadm token create --print-join-command > /vagrant/shared/join.sh
-
-# NFS
-mkdir /data
-chown nobody:nogroup /data/
-chmod 777 /data/
-apt install -y nfs-kernel-server
-echo "/data   192.168.60.0/24(rw,sync,no_subtree_check)" > /etc/exports
-
-exportfs -a
-service nfs-kernel-server restart
 
 exit 0

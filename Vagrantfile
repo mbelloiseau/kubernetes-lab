@@ -7,10 +7,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.synced_folder "scripts/", "/opt/scripts"
   config.vm.synced_folder "shared/", "/opt/shared"
-  config.vm.synced_folder "manifests/", "/opt/manifests"
 
   config.vm.provider "virtualbox" do |v|
-    v.memory = 2024
+    v.memory = 2048
     v.cpus = 2
   end
 
@@ -20,6 +19,18 @@ Vagrant.configure("2") do |config|
     echo "192.168.60.12 k8s-worker-2" >> /etc/hosts
   SCRIPT
 
+  config.vm.define "nfs-server" do |nfs|
+    nfs.vm.hostname = "nfs-server"
+    nfs.vm.network "private_network", ip: "192.168.60.5",
+      auto_config: true
+    nfs.vm.provision "shell", inline: $update_hosts
+    nfs.vm.provision "shell", path: "scripts/nfs_server.sh"
+    nfs.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+    end
+  end
+
   config.vm.define "k8s-master" do |master|
     master.vm.hostname = "k8s-master"
     master.vm.network "private_network", ip: "192.168.60.10",
@@ -28,6 +39,7 @@ Vagrant.configure("2") do |config|
     master.vm.provision "shell", path: "scripts/common.sh"
     master.vm.provision "shell", path: "scripts/master.sh"
     master.vm.provision "shell", path: "scripts/tools.sh"
+    master.vm.provision "shell", path: "scripts/nfs_client.sh"
     master.vm.network "forwarded_port", guest: 6443, host: 6443
   end
 
@@ -42,4 +54,5 @@ Vagrant.configure("2") do |config|
       worker.vm.provision "shell", path: "shared/join.sh" 
     end
   end
+    
 end

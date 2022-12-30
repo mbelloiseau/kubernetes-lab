@@ -2,9 +2,6 @@
 
 set -e
 
-mkdir -p /opt/data
-chmod 777 /opt/data
-
 KUBERNETES_VERSION="1.25.5-00"
 
 apt update >/dev/null 2>&1
