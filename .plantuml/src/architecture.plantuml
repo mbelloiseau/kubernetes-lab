@@ -1,0 +1,29 @@
+@startuml architecture
+
+nwdiag {
+
+  group {
+    color = "a3b7cb";
+    workstation;
+    description = "";
+  }
+
+  group {
+    color = "#4b8ed1";
+    nfs-server;
+    k8s-master;
+    k8s-worker-1;
+    k8s-worker-2;
+    description = "\t\t\t\t\t    virtualbox vms"
+  }
+
+  network kubernetes-lab {
+    address = "192.168.60.0/24"
+    workstation [address = "192.168.60.1"];
+    nfs-server [address = "192.168.60.5", description = "nfs-server"];
+    k8s-master [address = "192.168.60.10"];
+    k8s-worker-1 [address = "192.168.60.11"];
+    k8s-worker-2 [address = "192.168.60.12"];
+  } 
+}
+@enduml 
