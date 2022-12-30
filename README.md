@@ -66,11 +66,9 @@ We need to install a CNI plugin, I'm using Calico but there's some alternatives 
 kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
 ```
 
-If needed we can install `calicoctl` as a Kubernetes pod
-
 ### MetalLB
 
-Hhen you deploy a bare-metal Kubernetes cluster it does not come with a network load balancer. MetalLB is a solution.
+When you deploy a bare-metal Kubernetes cluster it does not come with a network load balancer. MetalLB is a solution.
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.7/config/manifests/metallb-native.yaml
