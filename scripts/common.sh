@@ -2,7 +2,7 @@
 
 set -e
 
-KUBERNETES_VERSION="1.25.5-00"
+KUBERNETES_VERSION="1.26.0-00"
 
 apt update >/dev/null 2>&1
 apt install -y apt-transport-https ca-certificates curl vim bash-completion >/dev/null 2>&1

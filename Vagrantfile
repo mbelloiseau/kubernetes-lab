@@ -54,5 +54,4 @@ Vagrant.configure("2") do |config|
       worker.vm.provision "shell", path: "shared/join.sh" 
     end
   end
-    
 end

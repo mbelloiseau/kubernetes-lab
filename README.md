@@ -21,10 +21,10 @@ I'm currently working with Vagrant 2.3.4 and VirtualBox 6.1.38 (6.1.38-dfsg-3~ub
 
 ## Usage
 
-```
-$ git clone https://github.com/mbelloiseau/kubernetes-lab
-$ cd kubernetes-lab
-$ vagrant up
+```bash
+git clone https://github.com/mbelloiseau/kubernetes-lab
+cd kubernetes-lab
+vagrant up
 ```
 
 ## Configuration
@@ -33,7 +33,7 @@ $ vagrant up
 
 After `vagrant up` our VMs are installed but our Kubernetes cluster is not fully functional.
 
-```bash
+```console
 $ kubectl get nodes
 NAME           STATUS     ROLES           AGE     VERSION
 k8s-master     NotReady   control-plane   8m35s   v1.25.5
