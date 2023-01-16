@@ -14,6 +14,7 @@ Vagrant.configure("2") do |config|
   end
 
   $update_hosts = <<-SCRIPT
+    echo "192.168.60.5" nfs-server >> /etc/hosts
     echo "192.168.60.10 k8s-master" >> /etc/hosts
     echo "192.168.60.11 k8s-worker-1" >> /etc/hosts
     echo "192.168.60.12 k8s-worker-2" >> /etc/hosts
